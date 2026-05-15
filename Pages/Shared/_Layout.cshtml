@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sustainable Federal Tracker</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SFT.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Official Brand Palette */
+        .text-jade { color: #00A86B !important; }
+        .text-turquoise { color: #40E0D0 !important; }
+        
+        .navbar-brand { font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; text-decoration: none; }
+        
+        /* Professional Globe Spacing */
+        .globe-brand {
+            display: inline-block;
+            margin-left: -3px; 
+            margin-right: -4px;
+            font-size: 1.25em;
+            vertical-align: middle;
+            filter: drop-shadow(0 0 2px rgba(64, 224, 208, 0.4));
+        }
+
+        .nav-link-jade { color: #00A86B !important; font-weight: 600; }
+        .nav-link:hover { opacity: 0.8; color: #00A86B !important; }
+        
+        main { flex: 1; }
+        footer { font-size: 0.85rem; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm mb-3">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <span class="text-jade">S.F.T.</span> 
+                    <span style="color: #dee2e6; margin: 0 12px; font-weight: 300;">|</span>
+                    <span class="text-jade">Humanity</span><span class="text-turquoise globe-brand">🌐</span><span class="text-turquoise">ne</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/">Home</a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-jade" href="/Audit">Audit</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/Profile">My Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                    <button type="submit" class="nav-link btn btn-link text-dark py-2" style="text-decoration: none; border: none; font-weight: 400;">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/Account/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/Account/Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-white">
+        <div class="container py-4 text-center">
+            &copy; 2026 - Sustainable Federal Tracker | 
+            <span class="text-jade fw-bold">Axiom Engine</span> Intelligence | 
+            <code class="bg-light px-2 py-1 rounded" style="color: #666;">ID: ZZCXD7WSEQK6</code>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

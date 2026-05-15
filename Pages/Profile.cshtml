@@ -1,0 +1,271 @@
+﻿@page
+@model SFT.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Axiom Profile Dashboard";
+
+    // --- AXIOM ENGINE MASTER LOGIC: PRE-CALCULATE BEFORE RENDER ---
+    var axiomBlacklist = new List<string> {
+    "China", "Xinjiang", "XUAR", "XPCC", // Prohibited Regions/Entities
+    "Shein", "Temu", "Zara", "Fashion Nova", "H&M", "Boohoo", // High-Risk Retail
+    "Esquel", "Luthai", "Huafu", "Zhongtai" // Federal Enforcement Targets
+};
+    int finalFlagCount = 0;
+    double cumulativeIntegrity = 0;
+    int totalItems = Model.Purchases?.Count() ?? 0;
+
+    if (totalItems > 0)
+    {
+        foreach (var item in Model.Purchases)
+        {
+            bool isProhibited = false;
+            if (!string.IsNullOrEmpty(item.Origin) && axiomBlacklist.Any(o => item.Origin.Contains(o, StringComparison.OrdinalIgnoreCase))) isProhibited = true;
+            if (!string.IsNullOrEmpty(item.Brand) && axiomBlacklist.Any(b => item.Brand.Contains(b, StringComparison.OrdinalIgnoreCase))) isProhibited = true;
+
+            if (isProhibited || item.IntegrityScore < 70 || item.IsHighRisk)
+            {
+                finalFlagCount++;
+                // Blocked items contribute 0 to average
+            }
+            else
+            {
+                cumulativeIntegrity += item.IntegrityScore;
+            }
+        }
+    }
+    double finalGlobalIndex = totalItems > 0 ? (cumulativeIntegrity / totalItems) : 0;
+}
+
+<style>
+    /* THE AXIOM PRINT PROTOCOL - High Authority Styling */
+    @@media print {
+        /* Hide UI elements, navigation, and interaction buttons */
+        nav, .navbar, footer, .btn, .btn-sm, .mb-4:not(.print-only), .row.mb-2 {
+            display: none !important;
+        }
+        /* Shift to professional serif typography for the 'Legal' feel */
+        body {
+            font-family: "Times New Roman", Times, serif !important;
+            background-color: white !important;
+            color: black !important;
+            font-size: 11pt;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* High-contrast table structure for government-grade reports */
+        .table {
+            border: 1px solid #000 !important;
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+            .table td, .table th {
+                border: 1px solid #000 !important;
+                padding: 8px !important;
+                color: #000 !important;
+            }
+
+        .table-dark {
+            background-color: #eee !important;
+            color: #000 !important;
+            border-bottom: 3px solid #000 !important;
+            font-weight: bold;
+        }
+        /* Reveal the hidden certificate elements */
+        .print-only {
+            display: block !important;
+        }
+        /* Hide web-only progress bars and UI badges to keep report clean */
+        .progress, .badge:not(.bg-danger):not(.bg-success) {
+            display: none !important;
+        }
+        /* Force black text for everything in the table */
+        .print-text-black {
+            color: black !important;
+            font-weight: bold !important;
+        }
+    }
+
+    /* Standard Web Dashboard Styling */
+    .print-only {
+        display: none;
+    }
+
+    .signature-line {
+        border-top: 2px solid #000;
+        width: 250px;
+        margin-top: 50px;
+        display: inline-block;
+    }
+</style>
+
+<div class="container mt-4">
+    @* --- EXECUTIVE PRINT HEADER (Triggered by Ctrl+P) --- *@
+    <div class="print-only mb-5">
+        <div class="text-center border-bottom border-3 pb-4 mb-4">
+            <h1 class="fw-bold text-uppercase" style="letter-spacing: 3px;">Supply Chain Integrity Ledger</h1>
+            <p class="mb-0"><strong>CERTIFICATE ID:</strong> AIC-@(DateTime.Now.ToString("yyyyMMdd"))-@User.Identity?.Name?.ToUpper()</p>
+            <p class="small text-muted">Axiom Engine Compliance Protocol: UFLPA-MAY-2026-READY</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <p class="small mb-1"><strong>ISSUED TO:</strong> @(User.Identity?.Name ?? "Authorized Entity")</p>
+                <p class="small"><strong>DATE OF ISSUANCE:</strong> @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+            </div>
+            <div class="col-6 text-end">
+                <p class="small mb-1"><strong>GLOBAL INTEGRITY INDEX:</strong> @finalGlobalIndex.ToString("F1")%</p>
+                <p class="small"><strong>STATUS:</strong> @(finalFlagCount > 0 ? "CONDITIONAL / ALERT ACTIVE" : "CERTIFIED CLEAN")</p>
+            </div>
+        </div>
+
+        <div class="p-3 bg-light border border-2 small mb-4" style="font-style: italic; border-left: 5px solid #000 !important;">
+            "This ledger provides a data-driven verification of supply chain origin and brand accountability.
+            Audits are calculated using the Axiom Engine weighted risk-assessment protocol. This document
+            serves as a record of due diligence regarding UFLPA and ethical sourcing standards."
+        </div>
+    </div>
+
+    @* --- LIVE DASHBOARD UI --- *@
+    <div class="row mb-2">
+        <div class="col-md-8">
+            <h1 class="fw-bold" style="color: #4A7c59; letter-spacing: -1px;">Axiom Profile Dashboard</h1>
+            <p class="mb-1"><strong>Entity Name:</strong> @User.Identity?.Name</p>
+            <p class="text-muted small"><strong>Certified Email:</strong> @User.Identity?.Name</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-success">Sustainability Rating: High</span>
+        </div>
+    </div>
+
+    @* DASHBOARD BOXES *@
+    <div class="row mb-4 text-white">
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm" style="background: #2b3035; border-left: 5px solid #00A86B;">
+                <small class="text-uppercase fw-bold opacity-75">Global Integrity Index</small>
+                <h2 class="display-5 fw-bold">@finalGlobalIndex.ToString("F1")%</h2>
+                <div class="progress mt-2" style="height: 5px; background: #444;">
+                    <div class="progress-bar bg-success" style="width: @finalGlobalIndex%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm" style="background: #2b3035; border-left: 5px solid #dc3545;">
+                <small class="text-uppercase fw-bold opacity-75">High-Risk Red Flags</small>
+                <h2 class="display-5 fw-bold">@finalFlagCount</h2>
+                <p class="mb-0 small text-danger">UFLPA Compliance Alerts</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm" style="background: #2b3035; border-left: 5px solid #17a2b8;">
+                <small class="text-uppercase fw-bold opacity-75">Standard Status</small>
+                <h2 class="fw-bold mt-1">MAY-2026 READY</h2>
+                <span class="badge bg-info text-dark">ACTIVE FIREWALL</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <p class="fw-bold small text-uppercase mb-2">Export Certified Integrity Data</p>
+        <a asp-page-handler="ExportCsv" class="btn btn-sm btn-outline-dark me-1">CSV Audit</a>
+        <a asp-page-handler="ExportTxt" class="btn btn-sm btn-outline-dark me-1">TXT Summary</a>
+        <a asp-page-handler="ExportJson" class="btn btn-success btn-sm me-1">Download Certified JSON</a>
+        <button onclick="window.print()" class="btn btn-primary btn-sm">Print Executive Ledger</button>
+    </div>
+
+    <h4 class="fw-bold mb-3">Supply Chain History</h4>
+    <div class="table-responsive">
+        <table class="table border bg-white shadow-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="small text-uppercase">Brand / Component</th>
+                    <th class="small text-uppercase">Origin</th>
+                    <th class="small text-uppercase">Tier</th>
+                    <th class="small text-uppercase">Integrity</th>
+                    <th class="small text-uppercase">Risk Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Purchases)
+                {
+                    bool isBlocked = false;
+                    if (!string.IsNullOrEmpty(item.Origin) && axiomBlacklist.Any(o => item.Origin.Contains(o, StringComparison.OrdinalIgnoreCase))) isBlocked = true;
+                    if (!string.IsNullOrEmpty(item.Brand) && axiomBlacklist.Any(b => item.Brand.Contains(b, StringComparison.OrdinalIgnoreCase))) isBlocked = true;
+                    
+                    int displayScore = isBlocked ? 0 : item.IntegrityScore;
+
+                    <tr>
+                        <td>
+                            <strong class="print-text-black">@item.Brand</strong><br />
+                            <small class="text-muted">@item.ItemName</small>
+                        </td>
+                        <td class="print-text-black">@item.Origin</td>
+                        <td>
+                            <div class="print-text-black">
+                                @if (item.Tier == SFT.Models.SupplierTier.Tier1_Assembly)
+                                {
+                                    @:TIER I: PRIMARY INTEGRATION
+                                }
+                                else if (item.Tier == SFT.Models.SupplierTier.Tier2_Mill)
+                                {
+                                    @:TIER II: STRATEGIC COMPONENT
+                                }
+                                else if (item.Tier == SFT.Models.SupplierTier.Tier3_Raw)
+                                {
+                                    @:TIER III: RAW ORIGIN EXTRACTION
+                                }
+                                else
+                                {
+                                    @item.Tier.ToString().Replace("_", " ").ToUpper()
+                                }
+                            </div>
+                        </td>
+                        <td style="width: 150px;">
+                            @* Live Progress Bar *@
+                            <div class="progress mb-1" style="height: 10px;">
+                                <div class="progress-bar @(displayScore < 70 ? "bg-danger" : "bg-success")" style="width: @displayScore%"></div>
+                            </div>
+                            @* Numerical text that always shows in Print *@
+                            <span class="print-text-black fw-bold">@displayScore%</span>
+                        </td>
+                        <td>
+                            @if (displayScore < 70 || isBlocked || item.IsHighRisk == true)
+                            {
+                                <span class="badge bg-danger p-2 text-uppercase d-block shadow-sm">
+                                    ⚠ UFLPA RISK
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success p-2 text-uppercase d-block shadow-sm">
+                                    ✓ VERIFIED CLEAN
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* --- EXECUTIVE PRINT FOOTER --- *@
+    <div class="print-only mt-5 pt-5">
+        <div class="row">
+            <div class="col-6 text-center">
+                <div class="signature-line"></div>
+                <p class="small mt-1 fw-bold">Authorized Auditor Signature</p>
+            </div>
+            <div class="col-6 text-center">
+                <div class="signature-line"></div>
+                <p class="small mt-1 fw-bold">Date of Verification</p>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <p class="text-muted" style="font-size: 10px;">End of Official Axiom Record. Generated via Humanity One Firewall.</p>
+        </div>
+    </div>
+</div>

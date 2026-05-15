@@ -1,0 +1,123 @@
+﻿@page
+@model SFT.Pages.AuditModel
+@{
+    ViewData["Title"] = "Federal Audit Registry";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">
+            <span style="color: #00A86B;">Axiom</span> Engine Audit
+        </h2>
+        <span class="badge bg-dark px-3 py-2">LIVE COMPLIANCE STATUS</span>
+    </div>
+
+    @* --- STAGE 1: DATA ENTRY FORM --- *@
+    <div class="card shadow-sm border-0 mb-5" style="border-left: 5px solid #00A86B !important;">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4 fw-bold">Initiate New Asset Audit</h5>
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label asp-for="Purchase.Brand" class="form-label small fw-bold text-muted">BRAND / CORPORATION</label>
+                        <input asp-for="Purchase.Brand" class="form-control" placeholder="e.g. Nike, Patagonia" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Purchase.ItemName" class="form-label small fw-bold text-muted">ASSET NAME</label>
+                        <input asp-for="Purchase.ItemName" class="form-control" placeholder="e.g. Organic Cotton Tee" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Purchase.Material" class="form-label small fw-bold text-muted">MATERIAL COMPOSITION</label>
+                        <input asp-for="Purchase.Material" class="form-control" placeholder="e.g. 100% Recycled Poly" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Purchase.OriginLocation" class="form-label small fw-bold text-muted">ORIGIN LOCATION</label>
+                        <input asp-for="Purchase.OriginLocation" class="form-control" placeholder="e.g. Vietnam, USA" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Purchase.Tier" class="form-label small fw-bold text-muted">SUPPLIER TIER ARCHITECTURE</label>
+                        <select asp-for="Purchase.Tier" asp-items="Html.GetEnumSelectList<SFT.Models.SupplierTier>()" class="form-select"></select>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="Purchase.Price" class="form-label small fw-bold text-muted">UNIT PRICE</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Purchase.Price" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="Purchase.Rating" class="form-label small fw-bold text-muted">QUALITY RATING</label>
+                        <select asp-for="Purchase.Rating" class="form-select">
+                            <option value="5">5 - Superior</option>
+                            <option value="4">4 - High</option>
+                            <option value="3">3 - Standard</option>
+                            <option value="2">2 - Subpar</option>
+                            <option value="1">1 - Failed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-dark w-100 fw-bold text-uppercase" style="letter-spacing: 1px;">Execute Axiom Audit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* --- STAGE 2: THE AUDIT LEDGER --- *@
+    <div class="table-responsive">
+        <h5 class="fw-bold mb-3">Historical Audit Ledger</h5>
+        <table class="table table-hover align-middle shadow-sm bg-white border">
+            <thead class="table-light">
+                <tr class="small text-uppercase fw-bold text-muted" style="letter-spacing: 1px;">
+                    <th>Timestamp</th>
+                    <th>Corporation</th>
+                    <th>Asset</th>
+                    <th>Supply Tier</th>
+                    <th class="text-center">Integrity Score</th>
+                    <th>Federal Stamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Purchases)
+                {
+                    // FIX: Live Logic to catch China even if DB says 100
+                    var axiomBlacklist = new List<string> {
+    "China", "Xinjiang", "XUAR", "XPCC", // Prohibited Regions/Entities
+    "Shein", "Temu", "Zara", "Fashion Nova", "H&M", "Boohoo", // High-Risk Retail
+    "Esquel", "Luthai", "Huafu", "Zhongtai" // Federal Enforcement Targets
+};
+                    bool forceFail = !string.IsNullOrEmpty(item.OriginLocation) && axiomBlacklist.Any(o => item.OriginLocation.Contains(o, StringComparison.OrdinalIgnoreCase));
+                    bool isHighRisk = item.IsHighRisk || forceFail;
+                    int displayScore = forceFail ? 0 : item.IntegrityScore;
+
+                    <tr>
+                        <td class="small text-muted">@item.Date.ToString("MM/dd/yy HH:mm")</td>
+                        <td class="fw-bold">@item.Brand</td>
+                        <td>@item.ItemName</td>
+                        <td>
+                            <span class="badge bg-light text-dark border fw-normal px-2 py-1">
+                                @Html.DisplayFor(modelItem => item.Tier)
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            @if (isHighRisk)
+                            {
+                                <div class="d-flex flex-column align-items-center">
+                                    <span class="text-danger fw-bold fs-5">@displayScore%</span>
+                                    <span class="badge bg-danger p-1 small" style="font-size: 0.6rem;">HIGH RISK</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="fw-bold fs-5" style="color: #00A86B;">@displayScore%</span>
+                            }
+                        </td>
+                        <td class="small font-monospace text-muted" style="font-size: 0.75rem;">
+                            @item.AuditStamp
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

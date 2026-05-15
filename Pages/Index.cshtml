@@ -1,0 +1,72 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Sustainable Federal Tracker";
+}
+
+<style>
+    /* Professional Federal Palette */
+    .text-jade { color: #00A86B !important; }
+    .text-turquoise { color: #40E0D0 !important; }
+    
+    .sft-title {
+        font-weight: 800;
+        letter-spacing: -1px;
+        text-shadow: 0px 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Fixed Globe Kerning: Pulls the "O" tight into "ne" */
+    .globe-o {
+        display: inline-block;
+        margin-left: -2px;
+        margin-right: -4px;
+        font-size: 1.1em;
+        vertical-align: middle;
+        filter: drop-shadow(0 0 8px rgba(64, 224, 208, 0.3));
+    }
+
+    .brand-subtitle {
+        letter-spacing: 5px;
+        color: #555;
+        font-weight: 300;
+    }
+
+    /* Unified Button Styling matching Navbar energy */
+    .btn-federal {
+        background-color: #00A86B;
+        color: white;
+        border: none;
+        font-weight: 700;
+        border-radius: 0; /* Sharp edges for a more "Federal" architectural look */
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-federal:hover {
+        background-color: #008f5b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 168, 107, 0.2);
+    }
+</style>
+
+<div class="container text-center mt-5 pt-5">
+    <h1 class="display-2 fw-bold mb-0" style="color: #00A86B; letter-spacing: -1px;">
+        Sustainable Federal Tracker
+    </h1>
+    <p class="h4 mt-2 text-uppercase" style="letter-spacing: 4px; color: #666;">
+        Humanity <span style="color: #40E0D0; margin-left: -5px; margin-right: -2px;">🌐ne</span>
+    </p>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 border-top pt-4">
+            <h2 class="fw-bold">Federal Audit Registry</h2>
+            <p class="lead text-muted">Axiom Engine Compliance | ID: ZZCXD7WSEQK6</p>
+            <div class="mt-4">
+                <a href="/Audit" class="btn btn-lg px-5 py-3 shadow" 
+                   style="background-color: #00A86B; color: white; border: none; font-weight: 700; border-radius: 0; text-decoration: none; display: inline-block;">
+                    EXECUTE FEDERAL AUDIT
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
