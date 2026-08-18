@@ -24,6 +24,9 @@ namespace SFT.Pages
         [BindProperty]
         public Purchase Purchase { get; set; } = new();
 
+        public string StatusClass { get; set; } = "bg-secondary"; // Default to neutral
+        public double LatestScore { get; set; }
+
         public IList<Purchase> Purchases { get; set; } = new List<Purchase>();
 
         /// <summary>
@@ -33,11 +36,41 @@ namespace SFT.Pages
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Isolating data to the current UserID to prevent cross-account data leaks
+            // 1. Pull the data
             Purchases = await _context.Purchases
                 .Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.Date)
                 .ToListAsync();
+
+            // 2. Default to Dark/Neutral so you KNOW if the logic worked
+            StatusClass = "bg-dark text-white";
+
+            // 3. The Science
+            if (Purchases != null && Purchases.Any())
+            {
+                var latest = Purchases.First();
+
+                // Check for China/Xinjiang specifically to force the top bar to Red
+                bool originFail = !string.IsNullOrEmpty(latest.OriginLocation) &&
+                                  (latest.OriginLocation.Contains("China", StringComparison.OrdinalIgnoreCase) ||
+                                   latest.OriginLocation.Contains("Xinjiang", StringComparison.OrdinalIgnoreCase));
+
+                LatestScore = originFail ? 0 : latest.IntegrityScore;
+
+                // THE FORCE-COLOR LOGIC
+                if (LatestScore < 50 || latest.IsHighRisk || originFail)
+                {
+                    StatusClass = "bg-danger text-white"; // FORCE RED
+                }
+                else if (LatestScore < 80)
+                {
+                    StatusClass = "bg-warning text-dark"; // FORCE YELLOW
+                }
+                else
+                {
+                    StatusClass = "bg-success text-white"; // FORCE GREEN
+                }
+            }
 
             return Page();
         }

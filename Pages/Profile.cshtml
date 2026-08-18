@@ -131,14 +131,18 @@
     </div>
 
     @* --- LIVE DASHBOARD UI --- *@
-    <div class="row mb-2">
+    <div class="row mb-4 d-flex justify-content-between align-items-start">
         <div class="col-md-8">
             <h1 class="fw-bold" style="color: #4A7c59; letter-spacing: -1px;">Axiom Profile Dashboard</h1>
             <p class="mb-1"><strong>Entity Name:</strong> @User.Identity?.Name</p>
             <p class="text-muted small"><strong>Certified Email:</strong> @User.Identity?.Name</p>
         </div>
-        <div class="col-md-4 text-end">
-            <span class="badge bg-success">Sustainability Rating: High</span>
+
+        <div class="col-md-3">
+            <div class="p-3 shadow @Model.RatingClass" style="border-radius: 12px; min-width: 200px; text-align: center;">
+                <h3 class="fw-bold mb-0 text-white">@Model.SustainabilityRating</h3>
+                <p class="small mb-0 text-white" style="opacity: 0.9;">Current Supply Chain Standing</p>
+            </div>
         </div>
     </div>
 

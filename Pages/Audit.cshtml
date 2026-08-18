@@ -5,11 +5,19 @@
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">
             <span style="color: #00A86B;">Axiom</span> Engine Audit
         </h2>
-        <span class="badge bg-dark px-3 py-2">LIVE COMPLIANCE STATUS</span>
+        <span class="badge @Model.StatusClass px-3 py-2 shadow-sm">LIVE COMPLIANCE STATUS</span>
+    </div>
+
+    <div class="progress mb-4" style="height: 12px; background-color: #111;">
+        <div class="progress-bar @Model.StatusClass"
+             role="progressbar"
+             style="width: @(Model.LatestScore)%; transition: width 0.5s;"
+             aria-valuenow="@Model.LatestScore">
+        </div>
     </div>
 
     @* --- STAGE 1: DATA ENTRY FORM --- *@

@@ -24,6 +24,9 @@ namespace SFT.Pages
         public int TotalPurchases { get; set; }
         public decimal TotalSpent { get; set; }
 
+        public string SustainabilityRating { get; set; } = "Initializing...";
+        public string RatingClass { get; set; } = "text-secondary";
+
         // These properties specifically power the black dashboard boxes
         public double AverageIntegrityScore { get; set; }
         public int HighRiskCount { get; set; }
@@ -49,8 +52,27 @@ namespace SFT.Pages
             {
                 AverageIntegrityScore = Purchases.Average(p => p.IntegrityScore);
                 HighRiskCount = Purchases.Count(p => p.IntegrityScore < 70 || p.IsHighRisk);
-            }
 
+                // Fail-safe: if there is even one high risk item, or the average is low
+                bool isUrgentFail = HighRiskCount > 0 || AverageIntegrityScore < 50;
+
+                if (isUrgentFail)
+                {
+                    SustainabilityRating = "CRITICAL RISK";
+                    RatingClass = "bg-danger text-white"; // Red box, white letters
+                }
+                else if (AverageIntegrityScore < 80)
+                {
+                    SustainabilityRating = "MODERATE RISK";
+                    RatingClass = "bg-warning text-dark"; // Yellow box, dark letters
+                }
+                else
+                {
+                    SustainabilityRating = "HIGH INTEGRITY";
+                    RatingClass = "bg-success text-white"; // Green box, white letters
+                }
+
+            }
             return Page();
         }
 
