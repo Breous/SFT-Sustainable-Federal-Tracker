@@ -24,7 +24,7 @@ Version Control & Deployment: Git-managed enterprise repository workflow with au
 
 Architectural Highlights
 Supply Chain Node Resolution
-SFT structures apparel manufacturing as a relational network, ensuring every component, from raw material harvesting to final assembly—is traceable to an audited entity.
+SFT structures apparel manufacturing as a relational network, ensuring every component, from raw material harvesting to final assembly is traceable to an audited entity.
 
 C#
 public class SupplyChainNode
