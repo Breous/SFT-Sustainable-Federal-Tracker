@@ -2,7 +2,7 @@
 Sustainable Federal Tracker (SFT)
 Enterprise Supply Chain Provenance & Compliance Platform
 Executive Summary
-The Sustainable Federal Tracker (SFT) is an enterprise-grade supply chain traceability and compliance auditing platform engineered to evaluate multi-tier garment manufacturing networks. Built to solve a critical industry blind spot—the deep opacity of global textile supply chains—SFT provides rigorous backend architecture, relational database modeling, and automated validation across raw material harvesting, tier processing, and final distribution.
+The Sustainable Federal Tracker (SFT) is an enterprise-grade supply chain traceability and compliance auditing platform engineered to evaluate multi-tier garment manufacturing networks. Built to solve a critical industry blind spot—the deep opacity of global textile supply chains, SFT provides rigorous backend architecture, relational database modeling, and automated validation across raw material harvesting, tier processing, and final distribution.
 
 Core Technical Capabilities
 Multi-Tier Supply Chain Provenance: Maps and indexes complex multi-tier subcontractor networks, exposing hidden processing layers, homeworker inclusion, and raw material handoffs from origin to storefront.
